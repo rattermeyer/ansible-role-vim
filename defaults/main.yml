@@ -44,6 +44,8 @@ vundle_packages_languages:
 vundle_packages_full:
   - 'Valloric/YouCompleteMe'
 
-vundle_packages: "{{vundle_packages_full}}"
+vundle_packages: "{{vundle_packages_essential}}"
 
 package_unimpaired_remap_keys: true
+
+disable_arrow_keys: false
