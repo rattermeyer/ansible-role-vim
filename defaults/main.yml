@@ -1,12 +1,5 @@
 ---
 # defaults file for ansible-role-vim
-packages_add:
-  - vim
-  - build-essential
-  - cmake
-  - python-dev
-package_remove:
-  - vim-tiny
 home: "/home/{{user | mandatory}}"
 
 vundle_packages_essential:
@@ -20,6 +13,7 @@ vundle_packages_essential:
 
 vundle_packages_ui:
   - 'airblade/vim-gitgutter'
+  - 'vim-airline/vim-airline'
   - 'vim-airline/vim-airline-themes'
   - 'tomasr/molokai'
   - 'terryma/vim-multiple-cursors'

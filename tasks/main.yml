@@ -4,11 +4,21 @@
   assert:
     that: user is defined
 
+- name: include distribution specific tasks
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+
+- name: setup powerline fonts
+  include: powerline-fonts-fedora.yml
+  when: ansible_distribution == "Fedora"
+
 - name: Remove any packages, we do not want to have installed
-  apt: name="{{item}}" state=absent
-  with_items: "{{package_remove}}"
+  package: name="{{item}}" state=absent
+  with_items: "{{package_remove | default([]) }}"
 - name: Install required vim packages
-  apt: name={{item}} state=present install_recommends=yes
+  package: name={{item}} state=present 
   with_items: "{{packages_add}}"
 
 - block:
@@ -18,24 +28,8 @@
         - name: Create vimrc
           template: src=vimrc.j2 dest={{home}}/.vimrc backup=True
           register: vimrc_installed
-        - name: Install Powerline Font
-          file: path={{home}}/.fonts state=directory
-        - name: Download PowerlineSymbols
-          get_url: url="https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" dest={{home}}/.fonts/PowerlineSymbols.otf
-          register: powerline_symbols_download
-        - name: Execute Font Cache
-          command: fc-cache -vf {{home}}/.fonts
-          when: "{{powerline_symbols_download | changed }}"
-        - name: Create fontconfig conf.d directory
-          file: path={{home}}/.config/fontconfig/conf.d state=directory
-        - name: Download powerline symbols.conf
-          get_url:
-            url: "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf"
-            dest: "{{home}}/.config/fontconfig/conf.d/10-powerline-symbols.conf"
         - name: Install Plugins
           command: vim +PluginInstall +qall
-          when: "{{vimrc_installed | changed }}"
-      tags:
-        - powerline
+          when: "vimrc_installed is changed"
   become: true
   become_user: "{{user}}"

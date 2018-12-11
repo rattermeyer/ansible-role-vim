@@ -1,0 +1,7 @@
+packages_add:
+  - vim
+  - build-essential
+  - cmake
+  - python-dev
+package_remove:
+  - vim-tiny

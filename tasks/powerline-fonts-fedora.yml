@@ -1,0 +1,8 @@
+- name: Install Powerline Fonts
+  package:
+    name: "{{ item }}"
+  loop:
+    - powerline
+    - powerline-fonts
+
+
